@@ -3,12 +3,13 @@ package com.employeeproject.services;
 import com.employeeproject.exceptions.BadRequestException;
 import com.employeeproject.exceptions.ConflictException;
 import com.employeeproject.exceptions.NotFoundException;
-import com.employeeproject.models.EmployeeImpl;
-import com.employeeproject.models.ProjectImpl;
+import com.employeeproject.models.Employee;
+import com.employeeproject.models.Project;
 import com.employeeproject.repositories.contracts.EmployeeRepository;
 import com.employeeproject.repositories.contracts.ProjectRepository;
 import com.employeeproject.services.contracts.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -35,18 +36,19 @@ public class ProjectServiceImpl implements ProjectService {
   private EmployeeRepository employeeRepository;
 
   @Autowired
-  public ProjectServiceImpl(ProjectRepository projectRepository, EmployeeRepository employeeRepository) {
+  public ProjectServiceImpl(@Qualifier("ProjectRepository") ProjectRepository projectRepository,
+                            @Qualifier("EmployeeRepository") EmployeeRepository employeeRepository) {
     this.projectRepository = projectRepository;
     this.employeeRepository = employeeRepository;
   }
 
   @Override
-  public Map<Integer, ProjectImpl> getAllProjects() {
+  public Map<Integer, Project> getAllProjects() {
     return projectRepository.getAllProjects();
   }
 
   @Override
-  public ProjectImpl getProjectById(int projectId) {
+  public Project getProjectById(int projectId) {
     if (!isProjectExists(projectId)) {
       throw new NotFoundException(String.format(PROJECT_NOT_FOUND_EXCEPTION, projectId));
     }
@@ -54,16 +56,16 @@ public class ProjectServiceImpl implements ProjectService {
   }
 
   @Override
-  public void updateProject(int projectId, ProjectImpl project) {
+  public void updateProject(int projectId, Project project) {
     if (!isProjectExists(projectId)) {
       throw new NotFoundException(String.format(PROJECT_NOT_FOUND_EXCEPTION, projectId));
     }
-    ProjectImpl projectToUpdate = getProjectById(projectId);
+    Project projectToUpdate = getProjectById(projectId);
     projectToUpdate.setName(project.getName());
   }
 
   @Override
-  public void addProject(ProjectImpl project) {
+  public void addProject(Project project) {
     if (isProjectExists(project.getId())) {
       throw new ConflictException(String.format(PROJECT_ALREADY_EXIST_EXCEPTION, project.getId()));
     }
@@ -80,7 +82,7 @@ public class ProjectServiceImpl implements ProjectService {
   }
 
   @Override
-  public Map<Integer, EmployeeImpl> getAllEmployeesOfProject(int projectId) {
+  public Map<Integer, Employee> getAllEmployeesOfProject(int projectId) {
     if (!isProjectExists(projectId)) {
       throw new NotFoundException(String.format(PROJECT_NOT_FOUND_EXCEPTION, projectId));
     }
@@ -88,7 +90,7 @@ public class ProjectServiceImpl implements ProjectService {
   }
 
   @Override
-  public List<ProjectImpl> projectFilter(Map<String, String> parameters) {
+  public List<Project> projectFilter(Map<String, String> parameters) {
     String name = parameters.get("name");
 
     if (name != null) {
@@ -99,7 +101,7 @@ public class ProjectServiceImpl implements ProjectService {
   }
 
   @Override
-  public List<ProjectImpl> projectFilterByMultipleId(List<Integer> id) {
+  public List<Project> projectFilterByMultipleId(List<Integer> id) {
     return projectRepository.getAllProjects().values()
             .stream()
             .filter(project -> id.contains(project.getId()))
@@ -107,7 +109,7 @@ public class ProjectServiceImpl implements ProjectService {
   }
 
   @Override
-  public List<ProjectImpl> projectSort(Map<String, String> parameters) {
+  public List<Project> projectSort(Map<String, String> parameters) {
     String sort = parameters.get("sort");
 
     if (sort.equals("name_asc")) {
@@ -125,7 +127,7 @@ public class ProjectServiceImpl implements ProjectService {
     if (isEmployeeAssignedToProject(projectId, employeeId)) {
       throw new ConflictException(String.format(EMPLOYEE_ALREADY_ASSIGNED_EXCEPTION, employeeId, projectId));
     }
-    EmployeeImpl employeeToAssign = employeeRepository.getAllEmployees().get(employeeId);
+    Employee employeeToAssign = employeeRepository.getAllEmployees().get(employeeId);
     projectRepository.addEmployeeToProject(projectId, employeeToAssign);
   }
 
@@ -152,7 +154,7 @@ public class ProjectServiceImpl implements ProjectService {
     return projectRepository.projectExists(id);
   }
 
-  private List<ProjectImpl> filterByName(String name) {
+  private List<Project> filterByName(String name) {
     return projectRepository.getAllProjects()
             .values()
             .stream()
@@ -160,19 +162,19 @@ public class ProjectServiceImpl implements ProjectService {
             .collect(Collectors.toList());
   }
 
-  private List<ProjectImpl> sortByNameAscending() {
+  private List<Project> sortByNameAscending() {
     return projectRepository.getAllProjects()
             .values()
             .stream()
-            .sorted(Comparator.comparing(ProjectImpl::getName))
+            .sorted(Comparator.comparing(Project::getName))
             .collect(Collectors.toList());
   }
 
-  private List<ProjectImpl> sortByNameDescending() {
+  private List<Project> sortByNameDescending() {
     return projectRepository.getAllProjects()
             .values()
             .stream()
-            .sorted(Comparator.comparing(ProjectImpl::getName).reversed())
+            .sorted(Comparator.comparing(Project::getName).reversed())
             .collect(Collectors.toList());
   }
 }

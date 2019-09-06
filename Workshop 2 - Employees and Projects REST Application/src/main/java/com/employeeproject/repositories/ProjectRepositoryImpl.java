@@ -1,7 +1,7 @@
 package com.employeeproject.repositories;
 
-import com.employeeproject.models.EmployeeImpl;
-import com.employeeproject.models.ProjectImpl;
+import com.employeeproject.models.Employee;
+import com.employeeproject.models.Project;
 import com.employeeproject.repositories.contracts.ProjectRepository;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.stereotype.Repository;
@@ -9,21 +9,21 @@ import org.springframework.stereotype.Repository;
 import java.util.HashMap;
 import java.util.Map;
 
-@Repository
+@Repository("ProjectRepository")
 public class ProjectRepositoryImpl implements ProjectRepository {
 
-  private Map<Integer, ProjectImpl> projects;
-  private Map<Integer, Map<Integer, EmployeeImpl>> projectEmployees;
+  private Map<Integer, Project> projects;
+  private Map<Integer, Map<Integer, Employee>> projectEmployees;
 
   public ProjectRepositoryImpl() {
     projects = new HashMap<>();
     projectEmployees = new HashMap<>();
 
-    projects.put(1, new ProjectImpl(1, "Spring MVC"));
-    projects.put(2, new ProjectImpl(2, "Java"));
-    projects.put(3, new ProjectImpl(3, "Database"));
-    projects.put(4, new ProjectImpl(4, "WEB"));
-    projects.put(5, new ProjectImpl(5, "WEB API"));
+    projects.put(1, new Project(1, "Spring MVC"));
+    projects.put(2, new Project(2, "Java"));
+    projects.put(3, new Project(3, "Database"));
+    projects.put(4, new Project(4, "WEB"));
+    projects.put(5, new Project(5, "WEB API"));
 
     projectEmployees.put(1, new HashMap<>());
     projectEmployees.put(2, new HashMap<>());
@@ -33,12 +33,12 @@ public class ProjectRepositoryImpl implements ProjectRepository {
   }
 
   @Override
-  public Map<Integer, ProjectImpl> getAllProjects() {
+  public Map<Integer, Project> getAllProjects() {
     return projects;
   }
 
   @Override
-  public void addProject(ProjectImpl project) {
+  public void addProject(Project project) {
     projects.put(project.getId(), project);
     projectEmployees.put(project.getId(), new HashMap<>());
   }
@@ -55,7 +55,7 @@ public class ProjectRepositoryImpl implements ProjectRepository {
   }
 
   @Override
-  public void addEmployeeToProject(int projectId, EmployeeImpl employee) {
+  public void addEmployeeToProject(int projectId, Employee employee) {
     if (!projectEmployees.containsKey(projectId)) {
       projectEmployees.put(projectId, new HashMap<>());
     }
@@ -69,7 +69,7 @@ public class ProjectRepositoryImpl implements ProjectRepository {
 
   @JsonIgnore
   @Override
-  public Map<Integer, EmployeeImpl> getAllEmployeesOfProject(int projectId) {
+  public Map<Integer, Employee> getAllEmployeesOfProject(int projectId) {
     return projectEmployees.get(projectId);
   }
 }

@@ -1,9 +1,10 @@
 package com.employeeproject.controllers;
 
 import com.employeeproject.exceptions.NotFoundException;
-import com.employeeproject.models.EmployeeImpl;
-import com.employeeproject.models.ProjectImpl;
+import com.employeeproject.models.Employee;
+import com.employeeproject.models.Project;
 import com.employeeproject.services.contracts.EmployeeService;
+import com.employeeproject.services.contracts.ProjectService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.After;
 import org.junit.Before;
@@ -35,15 +36,15 @@ public class EmployeeControllerTests {
   @Autowired
   MockMvc mockMvc;
 
-  private Map<Integer, EmployeeImpl> employees;
-  private EmployeeImpl employee;
-  private ProjectImpl project;
+  private Map<Integer, Employee> employees;
+  private Employee employee;
+  private Project project;
 
   @Before
   public void initialize() {
     employees = new HashMap<>();
-    employee = new EmployeeImpl(1, "Ivan", "Todorov");
-    project = new ProjectImpl(1, "Java");
+    employee = new Employee(1, "Ivan", "Todorov");
+    project = new Project(1, "Java");
     employees.put(1, employee);
   }
 
@@ -106,7 +107,7 @@ public class EmployeeControllerTests {
     Map<String, String> map = new HashMap<>();
     map.put("firstName", "Ivan");
 
-    List<EmployeeImpl> employeeList = new ArrayList<>();
+    List<Employee> employeeList = new ArrayList<>();
     employeeList.add(employee);
 
     Mockito.when(mockedEmployeeService.employeeFilter(map)).thenReturn(employeeList);
@@ -129,7 +130,7 @@ public class EmployeeControllerTests {
   }
 
   @Test
-  public void create_Should_Call_Create_Method_1_Time_When_Call() throws Exception {
+  public void create_Should_Return_StatusCode_OK_When_Employee_Is_Valid() throws Exception {
     //Arrange
     Mockito.doNothing().when(mockedEmployeeService).addEmployee(employee);
 
@@ -141,19 +142,97 @@ public class EmployeeControllerTests {
   }
 
   @Test
+  public void create_Should_Return_StatusCode_BADREQUEST_When_Employee_Id_Is_Negative() throws Exception {
+    //Arrange
+    employee.setId(-1);
+    Mockito.doNothing().when(mockedEmployeeService).addEmployee(employee);
+
+    //Act, Assert
+    mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/employees")
+            .contentType(MediaType.APPLICATION_JSON_UTF8)
+            .content(asJsonString(employee)))
+            .andExpect(MockMvcResultMatchers.status().isBadRequest());
+  }
+
+  @Test
+  public void create_Should_Return_StatusCode_BADREQUEST_When_Employee_FirstName_Is_Too_Short() throws Exception {
+    //Arrange
+    employee.setFirstName("T");
+    Mockito.doNothing().when(mockedEmployeeService).addEmployee(employee);
+
+    //Act, Assert
+    mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/employees")
+            .contentType(MediaType.APPLICATION_JSON_UTF8)
+            .content(asJsonString(employee)))
+            .andExpect(MockMvcResultMatchers.status().isBadRequest());
+
+    Mockito.verify(mockedEmployeeService, Mockito.times(0)).addEmployee(employee);
+    Mockito.verifyNoMoreInteractions(mockedEmployeeService);
+  }
+
+  @Test
+  public void create_Should_Return_StatusCode_BADREQUEST_When_Employee_LastName_Is_Too_Short() throws Exception {
+    //Arrange
+    employee.setLastName("T");
+    Mockito.doNothing().when(mockedEmployeeService).addEmployee(employee);
+
+    //Act, Assert
+    mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/employees")
+            .contentType(MediaType.APPLICATION_JSON_UTF8)
+            .content(asJsonString(employee)))
+            .andExpect(MockMvcResultMatchers.status().isBadRequest());
+
+    Mockito.verify(mockedEmployeeService, Mockito.times(0)).addEmployee(employee);
+    Mockito.verifyNoMoreInteractions(mockedEmployeeService);
+  }
+
+  @Test
+  public void create_Should_Return_StatusCode_BADREQUEST_When_Employee_FirstName_Is_Too_Long() throws Exception {
+    //Arrange
+    employee.setFirstName(new String(new char[58]));
+    Mockito.doNothing().when(mockedEmployeeService).addEmployee(employee);
+
+    //Act, Assert
+    mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/employees")
+            .contentType(MediaType.APPLICATION_JSON_UTF8)
+            .content(asJsonString(employee)))
+            .andExpect(MockMvcResultMatchers.status().isBadRequest());
+
+    Mockito.verify(mockedEmployeeService, Mockito.times(0)).addEmployee(employee);
+    Mockito.verifyNoMoreInteractions(mockedEmployeeService);
+  }
+
+  @Test
+  public void create_Should_Return_StatusCode_BADREQUEST_When_Employee_LastName_Is_Too_Long() throws Exception {
+    //Arrange
+    employee.setLastName(new String(new char[89]));
+    Mockito.doNothing().when(mockedEmployeeService).addEmployee(employee);
+
+    //Act, Assert
+    mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/employees")
+            .contentType(MediaType.APPLICATION_JSON_UTF8)
+            .content(asJsonString(employee)))
+            .andExpect(MockMvcResultMatchers.status().isBadRequest());
+
+    Mockito.verify(mockedEmployeeService, Mockito.times(0)).addEmployee(employee);
+    Mockito.verifyNoMoreInteractions(mockedEmployeeService);
+  }
+
+  @Test
   public void create_Should_Return_StatusCode_Is4xx_When_Give_No_Body() throws Exception {
     //Arrange
-
+    Mockito.doNothing().when(mockedEmployeeService).addEmployee(employee);
     //Act, Assert
     mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/employees")
             .contentType(MediaType.APPLICATION_JSON_UTF8))
             .andExpect(MockMvcResultMatchers.status().is4xxClientError());
 
+    Mockito.verify(mockedEmployeeService, Mockito.times(0)).addEmployee(employee);
     Mockito.verifyNoMoreInteractions(mockedEmployeeService);
   }
 
   @Test
-  public void delete_Should_Call_Delete_Method_1_Time_When_Call() throws Exception {
+  public void delete_Should_Call_Delete_Method_1_Time_When_Employee_Exist() throws Exception {
     //Arrange
     Mockito.when(mockedEmployeeService.getEmployeeById(employee.getId())).thenReturn(employee);
     Mockito.doNothing().when(mockedEmployeeService).deleteEmployee(employee.getId());
@@ -171,10 +250,14 @@ public class EmployeeControllerTests {
   public void delete_Should_Return_StatusCode_NOT_FOUND_When_Id_Not_Exist() throws Exception {
     //Arrange
     Mockito.when(mockedEmployeeService.getEmployeeById(employee.getId())).thenReturn(null);
+    Mockito.doThrow(NotFoundException.class).when(mockedEmployeeService).deleteEmployee(employee.getId());
 
     //Act, Assert
     mockMvc.perform(MockMvcRequestBuilders.delete("/employees/{id}", employee.getId()))
             .andExpect(MockMvcResultMatchers.status().isNotFound());
+
+    Mockito.verify(mockedEmployeeService, Mockito.times(0)).deleteEmployee(employee.getId());
+    Mockito.verifyNoMoreInteractions(mockedEmployeeService);
   }
 
   @Test
@@ -187,13 +270,80 @@ public class EmployeeControllerTests {
             .contentType(MediaType.APPLICATION_JSON_UTF8)
             .content(asJsonString(employee)))
             .andExpect(MockMvcResultMatchers.status().isNotFound());
+
+    Mockito.verify(mockedEmployeeService, Mockito.times(0)).updateEmployee(employee.getId(), employee);
+    Mockito.verifyNoMoreInteractions(mockedEmployeeService);
+  }
+
+  @Test
+  public void update_Should_Return_StatusCode_BADREQUEST_When_Employee_LastName_Is_Too_Long() throws Exception {
+    //Arrange
+    Mockito.when(mockedEmployeeService.getEmployeeById(employee.getId())).thenReturn(employee);
+    employee.setLastName(new String(new char[87]));
+
+    //Act, Assert
+    mockMvc.perform(MockMvcRequestBuilders.put("/employees/{id}", employee.getId())
+            .contentType(MediaType.APPLICATION_JSON_UTF8)
+            .content(asJsonString(employee)))
+            .andExpect(MockMvcResultMatchers.status().isNotFound());
+
+    Mockito.verify(mockedEmployeeService, Mockito.times(0)).updateEmployee(employee.getId(), employee);
+    Mockito.verifyNoMoreInteractions(mockedEmployeeService);
+  }
+
+  @Test
+  public void update_Should_Return_StatusCode_BADREQUEST_When_Employee_FirstName_Is_Too_Long() throws Exception {
+    //Arrange
+    Mockito.when(mockedEmployeeService.getEmployeeById(employee.getId())).thenReturn(employee);
+    employee.setFirstName(new String(new char[87]));
+
+    //Act, Assert
+    mockMvc.perform(MockMvcRequestBuilders.put("/employees/{id}", employee.getId())
+            .contentType(MediaType.APPLICATION_JSON_UTF8)
+            .content(asJsonString(employee)))
+            .andExpect(MockMvcResultMatchers.status().isNotFound());
+
+    Mockito.verify(mockedEmployeeService, Mockito.times(0)).updateEmployee(employee.getId(), employee);
+    Mockito.verifyNoMoreInteractions(mockedEmployeeService);
+  }
+
+  @Test
+  public void update_Should_Return_StatusCode_BADREQUEST_When_Employee_FirstName_Is_Too_Short() throws Exception {
+    //Arrange
+    Mockito.when(mockedEmployeeService.getEmployeeById(employee.getId())).thenReturn(employee);
+    employee.setFirstName("Iv");
+
+    //Act, Assert
+    mockMvc.perform(MockMvcRequestBuilders.put("/employees/{id}", employee.getId())
+            .contentType(MediaType.APPLICATION_JSON_UTF8)
+            .content(asJsonString(employee)))
+            .andExpect(MockMvcResultMatchers.status().isNotFound());
+
+    Mockito.verify(mockedEmployeeService, Mockito.times(0)).updateEmployee(employee.getId(), employee);
+    Mockito.verifyNoMoreInteractions(mockedEmployeeService);
+  }
+
+  @Test
+  public void update_Should_Return_StatusCode_BADREQUEST_When_Employee_LastName_Is_Too_Short() throws Exception {
+    //Arrange
+    Mockito.when(mockedEmployeeService.getEmployeeById(employee.getId())).thenReturn(employee);
+    employee.setLastName("Iv");
+
+    //Act, Assert
+    mockMvc.perform(MockMvcRequestBuilders.put("/employees/{id}", employee.getId())
+            .contentType(MediaType.APPLICATION_JSON_UTF8)
+            .content(asJsonString(employee)))
+            .andExpect(MockMvcResultMatchers.status().isNotFound());
+
+    Mockito.verify(mockedEmployeeService, Mockito.times(0)).updateEmployee(employee.getId(), employee);
+    Mockito.verifyNoMoreInteractions(mockedEmployeeService);
   }
 
   @Test
   public void getAllById_Should_Return_StatusCode_OK_When_Filtered_By_Given_Parameters() throws Exception {
     //Arrange
     List<Integer> employeeListId = new ArrayList<>();
-    List<EmployeeImpl> employeeList = new ArrayList<>();
+    List<Employee> employeeList = new ArrayList<>();
     employeeList.add(employee);
 
     employeeListId.add(employee.getId());
@@ -223,7 +373,7 @@ public class EmployeeControllerTests {
     Map<String, String> map = new HashMap<>();
     map.put("sort", "firstName_asc");
 
-    List<EmployeeImpl> employeeList = new ArrayList<>();
+    List<Employee> employeeList = new ArrayList<>();
     employeeList.add(employee);
 
     Mockito.when(mockedEmployeeService.employeeSort(map)).thenReturn(employeeList);
@@ -248,10 +398,10 @@ public class EmployeeControllerTests {
   @Test
   public void getProjects_Should_Return_StatusCode_OK_When_Id_Exist() throws Exception {
     //Arrange
-    Map<Integer, ProjectImpl> projectMap = new HashMap<>();
+    Map<Integer, Project> projectMap = new HashMap<>();
     projectMap.put(project.getId(), project);
 
-   Mockito.when(mockedEmployeeService.getAllProjectsOfEmployee(employee.getId())).thenReturn(projectMap);
+    Mockito.when(mockedEmployeeService.getAllProjectsOfEmployee(employee.getId())).thenReturn(projectMap);
 
     //Act, Assert
     mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/employees/1/projects"))

@@ -2,8 +2,8 @@ package com.employeeproject.services;
 
 import com.employeeproject.exceptions.ConflictException;
 import com.employeeproject.exceptions.NotFoundException;
-import com.employeeproject.models.EmployeeImpl;
-import com.employeeproject.models.ProjectImpl;
+import com.employeeproject.models.Employee;
+import com.employeeproject.models.Project;
 import com.employeeproject.repositories.contracts.EmployeeRepository;
 import org.junit.After;
 import org.junit.Assert;
@@ -28,21 +28,21 @@ public class EmployeeServiceImplTests {
   @InjectMocks
   EmployeeServiceImpl employeeService;
 
-  private Map<Integer, EmployeeImpl> employees;
-  private EmployeeImpl employee;
-  private ProjectImpl project;
+  private Map<Integer, Employee> employees;
+  private Employee employee;
+  private Project project;
 
   @Before
   public void initialize() {
     employees = new HashMap<>();
-    employees.put(1, new EmployeeImpl(1, "Ivan", "Todorov"));
-    employees.put(2, new EmployeeImpl(2, "Penka", "Minkova"));
-    employees.put(3, new EmployeeImpl(3, "Ralica", "Stoqnova"));
-    employees.put(4, new EmployeeImpl(4, "Rosen", "Rosenov"));
-    employees.put(5, new EmployeeImpl(5, "Rosen", "Yankov"));
+    employees.put(1, new Employee(1, "Ivan", "Todorov"));
+    employees.put(2, new Employee(2, "Penka", "Minkova"));
+    employees.put(3, new Employee(3, "Ralica", "Stoqnova"));
+    employees.put(4, new Employee(4, "Rosen", "Rosenov"));
+    employees.put(5, new Employee(5, "Rosen", "Yankov"));
 
-    employee = new EmployeeImpl(6, "Ivana", "Ivana");
-    project = new ProjectImpl(6, "Java");
+    employee = new Employee(6, "Ivana", "Ivana");
+    project = new Project(6, "Java");
 
     Mockito.when(mockRepository.getAllEmployees()).thenReturn(employees);
   }
@@ -74,7 +74,7 @@ public class EmployeeServiceImplTests {
     //Arrange
 
     //Act
-    EmployeeImpl employee = employeeService.getAllEmployees().get(1);
+    Employee employee = employeeService.getAllEmployees().get(1);
 
     //Assert
     Assert.assertEquals(1, employee.getId());
@@ -104,7 +104,7 @@ public class EmployeeServiceImplTests {
   @Test(expected = ConflictException.class)
   public void addEmployee_Should_Throw_ConflictException_When_Employee__Exist_Already() {
     //Arrange
-    Mockito.doThrow(ConflictException.class).when(mockRepository).addEmployee(Mockito.isA(EmployeeImpl.class));
+    Mockito.doThrow(ConflictException.class).when(mockRepository).addEmployee(Mockito.isA(Employee.class));
 
     //Act
     employeeService.addEmployee(employee);
@@ -125,14 +125,14 @@ public class EmployeeServiceImplTests {
   @Test
   public void getEmployeeProjects_Should_Return_EmployeeProjects_Count_When_Call() {
     //Arrange
-    Map<Integer, Map<Integer, ProjectImpl>> map = new HashMap<>();
+    Map<Integer, Map<Integer, Project>> map = new HashMap<>();
     map.put(employee.getId(), new HashMap<>());
     map.get(employee.getId()).put(project.getId(), project);
 
     Mockito.when(mockRepository.getAllProjectsOfEmployee(employee.getId())).thenReturn(map.get(employee.getId()));
 
     //Act
-    Map<Integer, ProjectImpl> allProjectsOfEmployee = mockRepository.getAllProjectsOfEmployee(employee.getId());
+    Map<Integer, Project> allProjectsOfEmployee = mockRepository.getAllProjectsOfEmployee(employee.getId());
     int expectedSize = 1;
     int actualSize = allProjectsOfEmployee.size();
 
@@ -148,7 +148,7 @@ public class EmployeeServiceImplTests {
     employeeMap.put("lastName", "Todorov");
 
     //Act
-    List<EmployeeImpl> employees = employeeService.employeeFilter(employeeMap);
+    List<Employee> employees = employeeService.employeeFilter(employeeMap);
 
     //Assert
     Assert.assertEquals(1, employees.size());
@@ -161,7 +161,7 @@ public class EmployeeServiceImplTests {
     employeeMap.put("firstName", "Rosen");
 
     //Act
-    List<EmployeeImpl> employees = employeeService.employeeFilter(employeeMap);
+    List<Employee> employees = employeeService.employeeFilter(employeeMap);
 
     //Assert
     Assert.assertEquals(2, employees.size());
@@ -174,7 +174,7 @@ public class EmployeeServiceImplTests {
     employeeMap.put("lastName", "Yankov");
 
     //Act
-    List<EmployeeImpl> employees = employeeService.employeeFilter(employeeMap);
+    List<Employee> employees = employeeService.employeeFilter(employeeMap);
 
     //Assert
     Assert.assertEquals(1, employees.size());
@@ -187,7 +187,7 @@ public class EmployeeServiceImplTests {
     employeeMap.put("lastName", "Gonzo");
 
     //Act
-    List<EmployeeImpl> employees = employeeService.employeeFilter(employeeMap);
+    List<Employee> employees = employeeService.employeeFilter(employeeMap);
 
     //Assert
     Assert.assertEquals(0, employees.size());
@@ -201,7 +201,7 @@ public class EmployeeServiceImplTests {
     String nameToExpect = "Ivan";
 
     //Act
-    List<EmployeeImpl> employees = employeeService.employeeSort(employeeMap);
+    List<Employee> employees = employeeService.employeeSort(employeeMap);
     String actualName = employees.get(0).getFirstName();
 
     //Assert
@@ -216,7 +216,7 @@ public class EmployeeServiceImplTests {
     String nameToExpect = "Rosen";
 
     //Act
-    List<EmployeeImpl> employees = employeeService.employeeSort(employeeMap);
+    List<Employee> employees = employeeService.employeeSort(employeeMap);
     String actualName = employees.get(0).getFirstName();
 
     //Assert
@@ -231,7 +231,7 @@ public class EmployeeServiceImplTests {
     String nameToExpect = "Minkova";
 
     //Act
-    List<EmployeeImpl> employees = employeeService.employeeSort(employeeMap);
+    List<Employee> employees = employeeService.employeeSort(employeeMap);
     String actualName = employees.get(0).getLastName();
 
     //Assert
@@ -246,7 +246,7 @@ public class EmployeeServiceImplTests {
     String nameToExpect = "Yankov";
 
     //Act
-    List<EmployeeImpl> employees = employeeService.employeeSort(employeeMap);
+    List<Employee> employees = employeeService.employeeSort(employeeMap);
     String actualName = employees.get(0).getLastName();
 
     //Assert
@@ -261,7 +261,7 @@ public class EmployeeServiceImplTests {
     employeeMap.put("sort", "lastName_desc");
 
     //Act
-    List<EmployeeImpl> employees = employeeService.employeeSort(employeeMap);
+    List<Employee> employees = employeeService.employeeSort(employeeMap);
     int expectedSize = 0;
     int actualSize = employees.size();
     //Assert

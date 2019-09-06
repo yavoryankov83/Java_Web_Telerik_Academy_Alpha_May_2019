@@ -6,7 +6,7 @@ import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 
 @Component
-public class ProjectImpl {
+public class Project {
 
   @PositiveOrZero
   private int id;
@@ -14,11 +14,11 @@ public class ProjectImpl {
   @Size(min = 3, max = 15, message = "Name should be between 3 and 15 symbols.")
   private String name;
 
-  public ProjectImpl() {
+  public Project() {
     this(0, "");
   }
 
-  public ProjectImpl(int id, String name) {
+  public Project(int id, String name) {
     this.id = id;
     this.name = name;
   }

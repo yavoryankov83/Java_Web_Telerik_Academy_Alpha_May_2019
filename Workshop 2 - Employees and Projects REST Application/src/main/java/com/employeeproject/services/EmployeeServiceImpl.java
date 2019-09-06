@@ -3,12 +3,13 @@ package com.employeeproject.services;
 import com.employeeproject.exceptions.BadRequestException;
 import com.employeeproject.exceptions.ConflictException;
 import com.employeeproject.exceptions.NotFoundException;
-import com.employeeproject.models.EmployeeImpl;
-import com.employeeproject.models.ProjectImpl;
+import com.employeeproject.models.Employee;
+import com.employeeproject.models.Project;
 import com.employeeproject.repositories.contracts.EmployeeRepository;
 import com.employeeproject.repositories.contracts.ProjectRepository;
 import com.employeeproject.services.contracts.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -32,18 +33,19 @@ public class EmployeeServiceImpl implements EmployeeService {
   private ProjectRepository projectRepository;
 
   @Autowired
-  public EmployeeServiceImpl(EmployeeRepository employeeRepository, ProjectRepository projectRepository) {
+  public EmployeeServiceImpl(@Qualifier("EmployeeRepository") EmployeeRepository employeeRepository,
+                             @Qualifier("ProjectRepository") ProjectRepository projectRepository) {
     this.employeeRepository = employeeRepository;
     this.projectRepository = projectRepository;
   }
 
   @Override
-  public Map<Integer, EmployeeImpl> getAllEmployees() {
+  public Map<Integer, Employee> getAllEmployees() {
     return employeeRepository.getAllEmployees();
   }
 
   @Override
-  public EmployeeImpl getEmployeeById(int employeeId) {
+  public Employee getEmployeeById(int employeeId) {
     if (!isEmployeeExists(employeeId)) {
       throw new NotFoundException(String.format(EMPLOYEE_NOT_FOUND_EXCEPTION, employeeId));
     }
@@ -51,11 +53,11 @@ public class EmployeeServiceImpl implements EmployeeService {
   }
 
   @Override
-  public void updateEmployee(int employeeId, EmployeeImpl employee) {
+  public void updateEmployee(int employeeId, Employee employee) {
     if (!isEmployeeExists(employeeId)) {
       throw new NotFoundException(String.format(EMPLOYEE_NOT_FOUND_EXCEPTION, employeeId));
     }
-    EmployeeImpl employeeToUpdate = getEmployeeById(employeeId);
+    Employee employeeToUpdate = getEmployeeById(employeeId);
     if (employee.getFirstName() != null) {
       employeeToUpdate.setFirstName(employee.getFirstName());
     }
@@ -65,7 +67,7 @@ public class EmployeeServiceImpl implements EmployeeService {
   }
 
   @Override
-  public void addEmployee(EmployeeImpl employee) {
+  public void addEmployee(Employee employee) {
     if (isEmployeeExists(employee.getId())) {
       throw new ConflictException(String.format(EMPLOYEE_ALREADY_EXIST_EXCEPTION, employee.getId()));
     }
@@ -82,7 +84,7 @@ public class EmployeeServiceImpl implements EmployeeService {
   }
 
   @Override
-  public Map<Integer, ProjectImpl> getAllProjectsOfEmployee(int employeeId) {
+  public Map<Integer, Project> getAllProjectsOfEmployee(int employeeId) {
     if (!isEmployeeExists(employeeId)) {
       throw new NotFoundException(String.format(EMPLOYEE_NOT_FOUND_EXCEPTION, employeeId));
     }
@@ -90,7 +92,7 @@ public class EmployeeServiceImpl implements EmployeeService {
   }
 
   @Override
-  public List<EmployeeImpl> employeeFilter(Map<String, String> parameters) {
+  public List<Employee> employeeFilter(Map<String, String> parameters) {
     String firstName = parameters.get("firstName");
     String lastName = parameters.get("lastName");
 
@@ -108,7 +110,7 @@ public class EmployeeServiceImpl implements EmployeeService {
   }
 
   @Override
-  public List<EmployeeImpl> employeeFilterByMultipleId(List<Integer> employeeId) {
+  public List<Employee> employeeFilterByMultipleId(List<Integer> employeeId) {
     return employeeRepository.getAllEmployees().values()
             .stream()
             .filter(employee -> employeeId.contains(employee.getId()))
@@ -116,7 +118,7 @@ public class EmployeeServiceImpl implements EmployeeService {
   }
 
   @Override
-  public List<EmployeeImpl> employeeSort(Map<String, String> parameters) {
+  public List<Employee> employeeSort(Map<String, String> parameters) {
     String sort = parameters.get("sort");
 
     if (sort.equals("firstName_asc")) {
@@ -140,7 +142,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     if (isProjectAssignedToEmployee(employeeId, projectId)) {
       throw new ConflictException(String.format(PROJECT_ALREADY_ASSIGNED_EXCEPTION, projectId, employeeId));
     }
-    ProjectImpl projectToAssign = projectRepository.getAllProjects().get(projectId);
+    Project projectToAssign = projectRepository.getAllProjects().get(projectId);
     employeeRepository.addProjectToEmployee(employeeId, projectToAssign);
   }
 
@@ -167,7 +169,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     return employeeRepository.isEmployeeExists(employeeId);
   }
 
-  private List<EmployeeImpl> filterByFirstName(String firstName) {
+  private List<Employee> filterByFirstName(String firstName) {
     return employeeRepository.getAllEmployees()
             .values()
             .stream()
@@ -175,7 +177,7 @@ public class EmployeeServiceImpl implements EmployeeService {
             .collect(Collectors.toList());
   }
 
-  private List<EmployeeImpl> filterByLastName(String lastName) {
+  private List<Employee> filterByLastName(String lastName) {
     return employeeRepository.getAllEmployees()
             .values()
             .stream()
@@ -183,7 +185,7 @@ public class EmployeeServiceImpl implements EmployeeService {
             .collect(Collectors.toList());
   }
 
-  private List<EmployeeImpl> filterByFirstAndLastName(String firstName, String lastName) {
+  private List<Employee> filterByFirstAndLastName(String firstName, String lastName) {
     return employeeRepository.getAllEmployees()
             .values()
             .stream()
@@ -192,35 +194,35 @@ public class EmployeeServiceImpl implements EmployeeService {
             .collect(Collectors.toList());
   }
 
-  private List<EmployeeImpl> sortByFirstNameAscending() {
+  private List<Employee> sortByFirstNameAscending() {
     return employeeRepository.getAllEmployees()
             .values()
             .stream()
-            .sorted(Comparator.comparing(EmployeeImpl::getFirstName))
+            .sorted(Comparator.comparing(Employee::getFirstName))
             .collect(Collectors.toList());
   }
 
-  private List<EmployeeImpl> sortByFirstNameDescending() {
+  private List<Employee> sortByFirstNameDescending() {
     return employeeRepository.getAllEmployees()
             .values()
             .stream()
-            .sorted(Comparator.comparing(EmployeeImpl::getFirstName).reversed())
+            .sorted(Comparator.comparing(Employee::getFirstName).reversed())
             .collect(Collectors.toList());
   }
 
-  private List<EmployeeImpl> sortByLastNameAscending() {
+  private List<Employee> sortByLastNameAscending() {
     return employeeRepository.getAllEmployees()
             .values()
             .stream()
-            .sorted(Comparator.comparing(EmployeeImpl::getLastName))
+            .sorted(Comparator.comparing(Employee::getLastName))
             .collect(Collectors.toList());
   }
 
-  private List<EmployeeImpl> sortByLastNameDescending() {
+  private List<Employee> sortByLastNameDescending() {
     return employeeRepository.getAllEmployees()
             .values()
             .stream()
-            .sorted(Comparator.comparing(EmployeeImpl::getLastName).reversed())
+            .sorted(Comparator.comparing(Employee::getLastName).reversed())
             .collect(Collectors.toList());
   }
 }

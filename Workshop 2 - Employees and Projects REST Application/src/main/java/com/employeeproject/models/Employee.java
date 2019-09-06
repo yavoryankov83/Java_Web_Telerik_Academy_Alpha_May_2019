@@ -6,7 +6,7 @@ import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 
 @Component
-public class EmployeeImpl {
+public class Employee {
 
   @PositiveOrZero
   private int id;
@@ -14,11 +14,11 @@ public class EmployeeImpl {
   @Size(min = 3, max = 20, message = "First and Last name should be between 3 and 20 symbols.")
   private String firstName, lastName;
 
-  public EmployeeImpl() {
+  public Employee() {
     this(0, "", "");
   }
 
-  public EmployeeImpl(int id, String firstName, String lastName) {
+  public Employee(int id, String firstName, String lastName) {
     this.id = id;
     this.firstName = firstName;
     this.lastName = lastName;

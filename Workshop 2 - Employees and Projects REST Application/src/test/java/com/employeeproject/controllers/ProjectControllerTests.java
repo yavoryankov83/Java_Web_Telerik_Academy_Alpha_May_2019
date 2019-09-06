@@ -1,8 +1,8 @@
 package com.employeeproject.controllers;
 
 import com.employeeproject.exceptions.NotFoundException;
-import com.employeeproject.models.EmployeeImpl;
-import com.employeeproject.models.ProjectImpl;
+import com.employeeproject.models.Employee;
+import com.employeeproject.models.Project;
 import com.employeeproject.services.contracts.ProjectService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.After;
@@ -19,7 +19,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import sun.security.ec.point.ProjectivePoint;
 
 import java.util.*;
 
@@ -36,15 +35,15 @@ public class ProjectControllerTests {
   @Autowired
   MockMvc mockMvc;
 
-  private Map<Integer, ProjectImpl> projects;
-  private EmployeeImpl employee;
-  private ProjectImpl project;
+  private Map<Integer, Project> projects;
+  private Employee employee;
+  private Project project;
 
   @Before
-  public void initialize(){
+  public void initialize() {
     projects = new HashMap<>();
-    employee = new EmployeeImpl(1, "Ivan", "Todorov");
-    project = new ProjectImpl(1, "Java");
+    employee = new Employee(1, "Ivan", "Todorov");
+    project = new Project(1, "Java");
     projects.put(1, project);
 
     Mockito.when(mockedProjectService.getAllProjects()).thenReturn(projects);
@@ -106,7 +105,7 @@ public class ProjectControllerTests {
     Map<String, String> map = new HashMap<>();
     map.put("name", "Java");
 
-    List<ProjectImpl> projectList = new ArrayList<>();
+    List<Project> projectList = new ArrayList<>();
     projectList.add(project);
 
     Mockito.when(mockedProjectService.projectFilter(map)).thenReturn(projectList);
@@ -192,7 +191,7 @@ public class ProjectControllerTests {
   public void getAllById_Should_Return_StatusCode_OK_When_Filtered_By_Given_Parameters() throws Exception {
     //Arrange
     List<Integer> projectListId = new ArrayList<>();
-    List<ProjectImpl> projectList = new ArrayList<>();
+    List<Project> projectList = new ArrayList<>();
     projectList.add(project);
 
     projectListId.add(project.getId());
@@ -223,7 +222,7 @@ public class ProjectControllerTests {
     Map<String, String> map = new HashMap<>();
     map.put("sort", "name_asc");
 
-    List<ProjectImpl> projectList = new ArrayList<>();
+    List<Project> projectList = new ArrayList<>();
     projectList.add(project);
 
     Mockito.when(mockedProjectService.projectSort(map)).thenReturn(projectList);
@@ -248,7 +247,7 @@ public class ProjectControllerTests {
   @Test
   public void getEmployees_Should_Return_StatusCode_OK_When_Id_Exist() throws Exception {
     //Arrange
-    Map<Integer, EmployeeImpl> employeeMap = new HashMap<>();
+    Map<Integer, Employee> employeeMap = new HashMap<>();
     employeeMap.put(employee.getId(), employee);
 
     Mockito.when(mockedProjectService.getAllEmployeesOfProject(project.getId())).thenReturn(employeeMap);

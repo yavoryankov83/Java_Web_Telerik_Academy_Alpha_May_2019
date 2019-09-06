@@ -2,10 +2,9 @@ package com.employeeproject.services;
 
 import com.employeeproject.exceptions.ConflictException;
 import com.employeeproject.exceptions.NotFoundException;
-import com.employeeproject.models.EmployeeImpl;
-import com.employeeproject.models.ProjectImpl;
+import com.employeeproject.models.Employee;
+import com.employeeproject.models.Project;
 import com.employeeproject.repositories.contracts.ProjectRepository;
-import com.employeeproject.services.contracts.ProjectService;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -30,21 +29,21 @@ public class ProjectServiceImplTests {
   @InjectMocks
   ProjectServiceImpl projectService;
 
-  private Map<Integer, ProjectImpl> projects;
-  private EmployeeImpl employee;
-  private ProjectImpl project;
+  private Map<Integer, Project> projects;
+  private Employee employee;
+  private Project project;
 
   @Before
-  public void initialize(){
+  public void initialize() {
     projects = new HashMap<>();
-    projects.put(1, new ProjectImpl(1, "Spring MVC"));
-    projects.put(2, new ProjectImpl(2, "Java"));
-    projects.put(3, new ProjectImpl(3, "Database"));
-    projects.put(4, new ProjectImpl(4, "WEB"));
-    projects.put(5, new ProjectImpl(5, "WEB API"));
+    projects.put(1, new Project(1, "Spring MVC"));
+    projects.put(2, new Project(2, "Java"));
+    projects.put(3, new Project(3, "Database"));
+    projects.put(4, new Project(4, "WEB"));
+    projects.put(5, new Project(5, "WEB API"));
 
-    employee = new EmployeeImpl(6, "Ivana", "Ivana");
-    project = new ProjectImpl(6, "Java");
+    employee = new Employee(6, "Ivana", "Ivana");
+    project = new Project(6, "Java");
 
     Mockito.when(mockProjectRepository.getAllProjects()).thenReturn(projects);
   }
@@ -76,7 +75,7 @@ public class ProjectServiceImplTests {
     //Arrange
 
     //Act
-    ProjectImpl projectById = projectService.getAllProjects().get(1);
+    Project projectById = projectService.getAllProjects().get(1);
 
     int expectedId = 1;
     int actualId = projectById.getId();
@@ -111,7 +110,7 @@ public class ProjectServiceImplTests {
   @Test(expected = ConflictException.class)
   public void addProject_Should_Throw_ConflictException_When_Project__Exist_Already() {
     //Arrange
-    Mockito.doThrow(ConflictException.class).when(mockProjectRepository).addProject(Mockito.isA(ProjectImpl.class));
+    Mockito.doThrow(ConflictException.class).when(mockProjectRepository).addProject(Mockito.isA(Project.class));
 
     //Act
     projectService.addProject(project);
@@ -132,14 +131,14 @@ public class ProjectServiceImplTests {
   @Test
   public void getProjectEmployees_Should_Return_ProjectEmployees_Count_When_Call() {
     //Arrange
-    Map<Integer, Map<Integer, EmployeeImpl>> map = new HashMap<>();
+    Map<Integer, Map<Integer, Employee>> map = new HashMap<>();
     map.put(employee.getId(), new HashMap<>());
     map.get(employee.getId()).put(project.getId(), employee);
 
     Mockito.when(mockProjectRepository.getAllEmployeesOfProject(project.getId())).thenReturn(map.get(employee.getId()));
 
     //Act
-    Map<Integer, EmployeeImpl> allEmployeeProjects = mockProjectRepository.getAllEmployeesOfProject(project.getId());
+    Map<Integer, Employee> allEmployeeProjects = mockProjectRepository.getAllEmployeesOfProject(project.getId());
     int expectedSize = 1;
     int actualSize = allEmployeeProjects.size();
 
@@ -154,7 +153,7 @@ public class ProjectServiceImplTests {
     employeeMap.put("name", "Java");
 
     //Act
-    List<ProjectImpl> projects = projectService.projectFilter(employeeMap);
+    List<Project> projects = projectService.projectFilter(employeeMap);
 
     //Assert
     Assert.assertEquals(1, projects.size());
@@ -167,7 +166,7 @@ public class ProjectServiceImplTests {
     employeeMap.put("name", "HTML 5");
 
     //Act
-    List<ProjectImpl> projects = projectService.projectFilter(employeeMap);
+    List<Project> projects = projectService.projectFilter(employeeMap);
 
     //Assert
     Assert.assertEquals(0, projects.size());
@@ -181,7 +180,7 @@ public class ProjectServiceImplTests {
     String nameToExpect = "Database";
 
     //Act
-    List<ProjectImpl> projects = projectService.projectSort(projectMap);
+    List<Project> projects = projectService.projectSort(projectMap);
     String actualName = projects.get(0).getName();
 
     //Assert
@@ -196,7 +195,7 @@ public class ProjectServiceImplTests {
     String nameToExpect = "WEB API";
 
     //Act
-    List<ProjectImpl> projects = projectService.projectSort(projectMap);
+    List<Project> projects = projectService.projectSort(projectMap);
     String actualName = projects.get(0).getName();
 
     //Assert
@@ -211,7 +210,7 @@ public class ProjectServiceImplTests {
     employeeMap.put("sort", "name_desc");
 
     //Act
-    List<ProjectImpl> projects = projectService.projectSort(employeeMap);
+    List<Project> projects = projectService.projectSort(employeeMap);
     int expectedSize = 0;
     int actualSize = projects.size();
     //Assert

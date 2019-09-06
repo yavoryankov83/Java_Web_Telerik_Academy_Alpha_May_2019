@@ -1,30 +1,30 @@
 package com.employeeproject.services.contracts;
 
-import com.employeeproject.models.EmployeeImpl;
-import com.employeeproject.models.ProjectImpl;
+import com.employeeproject.models.Employee;
+import com.employeeproject.models.Project;
 
 import java.util.List;
 import java.util.Map;
 
 public interface EmployeeService {
 
-  Map<Integer, EmployeeImpl> getAllEmployees();
+  Map<Integer, Employee> getAllEmployees();
 
-  EmployeeImpl getEmployeeById(int employeeId);
+  Employee getEmployeeById(int employeeId);
 
-  void updateEmployee(int employeeId, EmployeeImpl employee);
+  void updateEmployee(int employeeId, Employee employee);
 
-  void addEmployee(EmployeeImpl employee);
+  void addEmployee(Employee employee);
 
   void deleteEmployee(int employeeId);
 
-  Map<Integer, ProjectImpl> getAllProjectsOfEmployee(int employeeId);
+  Map<Integer, Project> getAllProjectsOfEmployee(int employeeId);
 
-  List<EmployeeImpl> employeeFilter(Map<String, String> parameters);
+  List<Employee> employeeFilter(Map<String, String> parameters);
 
-  List<EmployeeImpl> employeeFilterByMultipleId(List<Integer> employeeId);
+  List<Employee> employeeFilterByMultipleId(List<Integer> employeeId);
 
-  List<EmployeeImpl> employeeSort(Map<String, String> parameters);
+  List<Employee> employeeSort(Map<String, String> parameters);
 
   void assignProjectToEmployee(int employeeId, int projectId);
 

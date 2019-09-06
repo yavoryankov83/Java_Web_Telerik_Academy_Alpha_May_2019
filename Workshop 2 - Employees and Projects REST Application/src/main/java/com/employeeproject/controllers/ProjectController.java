@@ -1,7 +1,7 @@
 package com.employeeproject.controllers;
 
-import com.employeeproject.models.EmployeeImpl;
-import com.employeeproject.models.ProjectImpl;
+import com.employeeproject.models.Employee;
+import com.employeeproject.models.Project;
 import com.employeeproject.services.contracts.ProjectService;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,27 +20,27 @@ public class ProjectController {
   }
 
   @GetMapping
-  public Map<Integer, ProjectImpl> getAll() {
+  public Map<Integer, Project> getAll() {
     return projectService.getAllProjects();
   }
 
   @GetMapping(path = "{id}/employees")
-  public Map<Integer, EmployeeImpl> getEmployees(@Valid @PathVariable int id) {
+  public Map<Integer, Employee> getEmployees(@Valid @PathVariable int id) {
     return projectService.getAllEmployeesOfProject(id);
   }
 
   @GetMapping(path = "{projectId}")
-  public ProjectImpl getById(@Valid @PathVariable int projectId) {
+  public Project getById(@Valid @PathVariable int projectId) {
     return projectService.getProjectById(projectId);
   }
 
   @PostMapping
-  public void create(@Valid @RequestBody ProjectImpl project) {
+  public void create(@Valid @RequestBody Project project) {
     projectService.addProject(project);
   }
 
   @PutMapping(path = "{projectId}")
-  public void update(@Valid @PathVariable int projectId, @Valid @RequestBody ProjectImpl projectDetails) {
+  public void update(@Valid @PathVariable int projectId, @Valid @RequestBody Project projectDetails) {
     projectService.updateProject(projectId, projectDetails);
   }
 
@@ -60,17 +60,17 @@ public class ProjectController {
   }
 
   @GetMapping(path = "filtered")
-  public List<ProjectImpl> filter(@Valid @RequestParam Map<String, String> filterParams) {
+  public List<Project> filter(@Valid @RequestParam Map<String, String> filterParams) {
     return projectService.projectFilter(filterParams);
   }
 
   @GetMapping(path = "id_filter")
-  public List<ProjectImpl> getAllById(@Valid @RequestParam(name = "id") List<Integer> projectId) {
+  public List<Project> getAllById(@Valid @RequestParam(name = "id") List<Integer> projectId) {
     return projectService.projectFilterByMultipleId(projectId);
   }
 
   @GetMapping(path = "sorted")
-  public List<ProjectImpl> sort(@Valid @RequestParam Map<String, String> sortParams) {
+  public List<Project> sort(@Valid @RequestParam Map<String, String> sortParams) {
     return projectService.projectSort(sortParams);
   }
 }

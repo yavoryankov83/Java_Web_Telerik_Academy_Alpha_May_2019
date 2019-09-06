@@ -1,7 +1,7 @@
 package com.employeeproject.controllers;
 
-import com.employeeproject.models.EmployeeImpl;
-import com.employeeproject.models.ProjectImpl;
+import com.employeeproject.models.Employee;
+import com.employeeproject.models.Project;
 import com.employeeproject.services.contracts.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -21,27 +21,27 @@ public class EmployeeController {
   }
 
   @GetMapping
-  public Map<Integer, EmployeeImpl> getAll() {
+  public Map<Integer, Employee> getAll() {
     return employeeService.getAllEmployees();
   }
 
   @GetMapping(path = "{employeeId}/projects")
-  public Map<Integer, ProjectImpl> getProjects(@Valid @PathVariable int employeeId) {
+  public Map<Integer, Project> getProjects(@Valid @PathVariable int employeeId) {
     return employeeService.getAllProjectsOfEmployee(employeeId);
   }
 
   @GetMapping(path = "{employeeId}")
-  public EmployeeImpl getById(@Valid @PathVariable int employeeId) {
+  public Employee getById(@Valid @PathVariable int employeeId) {
     return employeeService.getEmployeeById(employeeId);
   }
 
   @PostMapping
-  public void create(@Valid @RequestBody EmployeeImpl employee) {
+  public void create(@Valid @RequestBody Employee employee) {
     employeeService.addEmployee(employee);
   }
 
   @PutMapping(path = "{employeeId}")
-  public void update(@Valid @PathVariable int employeeId, @Valid @RequestBody EmployeeImpl employee) {
+  public void update(@PathVariable @Valid int employeeId, @RequestBody @Valid Employee employee) {
     employeeService.updateEmployee(employeeId, employee);
   }
 
@@ -61,17 +61,17 @@ public class EmployeeController {
   }
 
   @GetMapping(path = "filtered")
-  public List<EmployeeImpl> filter(@Valid @RequestParam Map<String, String> filterParams) {
+  public List<Employee> filter(@Valid @RequestParam Map<String, String> filterParams) {
     return employeeService.employeeFilter(filterParams);
   }
 
   @GetMapping(path = "id_filter")
-  public List<EmployeeImpl> getAllById(@Valid @RequestParam(name = "id") List<Integer> employeeId) {
+  public List<Employee> getAllById(@Valid @RequestParam(name = "id") List<Integer> employeeId) {
     return employeeService.employeeFilterByMultipleId(employeeId);
   }
 
   @GetMapping(path = "sorted")
-  public List<EmployeeImpl> sort(@Valid @RequestParam Map<String, String> sortParams) {
+  public List<Employee> sort(@Valid @RequestParam Map<String, String> sortParams) {
     return employeeService.employeeSort(sortParams);
   }
 }
