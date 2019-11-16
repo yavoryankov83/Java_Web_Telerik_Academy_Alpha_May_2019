@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Employee app</title>
+</head>
+<body>
+<h1 th:text="#{home.welcome}">Hello Telerik Academy! (design)</h1>
+<p sec:authorize="isAuthenticated()">
+    <label>User:</label>
+    <span sec:authentication="name"/>
+    <br/>
+    <label>Role(s):</label>
+    <span sec:authentication="principal.authorities"/>
+</p>
+<ul>
+    <li>
+        <a href="#" th:href="@{/employees}">See all employees</a>
+    </li>
+    <li>
+        <a href="#" th:href="@{/employees/new}">Create new employee</a>
+    </li>
+    <li sec:authorize="hasRole('ROLE_ADMIN')">
+        <a href="#" th:href="@{/admin}">Admin Portal</a>
+    </li>
+</ul>
+<form sec:authorize="!isAuthenticated()" th:action="@{/login}" method="get">
+    <input type="submit" value="Login"/>
+</form>
+<form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="post">
+    <input type="submit" value="Logout"/>
+</form>
+</body>
+</html>

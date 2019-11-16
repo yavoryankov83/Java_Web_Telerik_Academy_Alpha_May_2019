@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>jQuery Demo</title>
+    <script src="webjars/jquery/3.3.1/jquery.js"></script>
+</head>
+<body>
+    <h1 title="Hello!"  id="header">This is jQuery!</h1>
+
+    <div id="divText" style="border:1px solid purple; font-size:20px">Hi!</div>
+
+    <button onclick="changeElement()">Change</button>
+    <button onclick="resetElement()">Reset</button>
+
+    <h1>TODO</h1>
+
+    <label for="text-input">Input here: </label>
+    <input id="text-input" type="text"/>
+
+    <button onclick="addTodo()">Add</button>
+
+    <button id="clear-btn">Clear list</button>
+
+    <h2>To do list: </h2>
+    <ul id="todos-list">
+        <li>Upload video from lecture</li>
+    </ul>
+
+    <h1>Movies</h1>
+
+    <input id="search-term" type="text" placeholder="Search movie">
+    <button id="search-btn">Search</button>
+    <div id="result"></div>
+
+    <script src="../static/main.js" th:src="@{main.js}"></script>
+    <script src="../static/movies.js" th:src="@{movies.js}"></script>
+</body>
+</html>

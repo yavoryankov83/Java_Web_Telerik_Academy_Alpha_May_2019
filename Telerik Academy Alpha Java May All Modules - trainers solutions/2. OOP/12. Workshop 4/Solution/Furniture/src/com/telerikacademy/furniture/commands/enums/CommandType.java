@@ -1,0 +1,13 @@
+package com.telerikacademy.furniture.commands.enums;
+
+public enum CommandType {
+    CREATECOMPANY,
+    ADDFURNITURETOCOMPANY,
+    REMOVEFURNITUREFROMCOMPANY,
+    FINDFURNITUREFROMCOMPANY,
+    SHOWCOMPANYCATALOG,
+    CREATECHAIR,
+    CREATETABLE,
+    SETCHAIRHEIGHT,
+    CONVERTCHAIR;
+}

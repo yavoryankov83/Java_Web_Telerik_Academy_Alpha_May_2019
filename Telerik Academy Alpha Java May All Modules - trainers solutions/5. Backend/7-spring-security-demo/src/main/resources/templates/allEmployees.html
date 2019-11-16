@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Employees List</title>
+    <link rel="stylesheet" th:href="@{/styles.css}" type="text/css" href="../static/styles.css"/>
+</head>
+<body>
+
+<ul>
+    <li>
+        <a href="#" th:href="@{/employees}">See all employees</a>
+    </li>
+    <li>
+        <a href="#" th:href="@{/employees/new}">Create new employee</a>
+    </li>
+</ul>
+
+<div th:if="${employeesList.isEmpty()}">
+    <h2 th:text="#{employeeTable.header.noEmployees}">No Employees</h2>
+</div>
+
+<div th:unless="${employeesList.isEmpty()}">
+
+    <h2 th:text="#{employeeTable.header}">Employees (design)</h2>
+
+    <div class="table">
+
+        <div class="header">
+            <div class="cell" th:text="#{table.id}">1</div>
+            <div class="cell" th:text="#{table.firstName}">1</div>
+            <div class="cell" th:text="#{table.lastName}">1</div>
+        </div>
+
+        <div class="row" th:each="employee : ${employeesList}">
+
+            <div class="cell" th:text="${employee.getId()}">1</div>
+
+            <div class="cell" th:text="${employee.getFirstName()}">Petar</div>
+
+            <div class="cell" th:text="${employee.getLastName()}">Training</div>
+
+        </div>
+
+    </div>
+</div>
+
+
+</body>
+</html>

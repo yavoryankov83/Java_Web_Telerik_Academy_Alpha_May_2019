@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Employee app</title>
+</head>
+<body>
+
+<h1 th:text="#{home.welcome}">Hello Telerik Academy! (design)</h1>
+
+<ul>
+    <li>
+        <a href="#" th:href="@{/employees}">See all employees</a>
+    </li>
+    <li>
+        <a href="#" th:href="@{/employees/new}">Create new employee</a>
+    </li>
+</ul>
+
+
+</body>
+</html>

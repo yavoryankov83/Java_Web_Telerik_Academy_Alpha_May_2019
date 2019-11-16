@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Creating a new employee</title>
+    <link rel="stylesheet" th:href="@{/styles.css}" type="text/css" href="../static/styles.css"/>
+</head>
+<body>
+
+<ul>
+    <li>
+        <a href="#" th:href="@{/employees}">See all employees</a>
+    </li>
+    <li>
+        <a href="#" th:href="@{/employees/new}">Create new employee</a>
+    </li>
+</ul>
+
+<form action="#" th:action="@{/employees/new}"
+      th:object="${employee}" method="post">
+
+    <br>
+    <label th:text="#{employee.header.firstName}">Employee name:</label>
+    <input type="text" th:field="*{firstName}"/>
+    <label style="color: red" th:errors="*{firstName}">first name error</label>
+
+    <br>
+    <label th:text="#{employee.header.lastName}">Employee name:</label>
+    <input type="text" th:field="*{lastName}"/>
+    <label class="error" th:errors="*{lastName}" th:text="#{newEmployee.invalidName.last}">last name error</label>
+
+    <br/><br/>
+
+    <input type="submit" value="Save"/>
+
+</form>
+
+
+</body>
+</html>

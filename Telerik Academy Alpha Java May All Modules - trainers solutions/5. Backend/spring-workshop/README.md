@@ -1,0 +1,30 @@
+# Task Description
+
+Create Spring REST API for managing employees and their projects.
+
+- Employees have id, first name and last name.
+  - Id should be non-negative, first and last name between 3 and 20 symbols.
+- Projects have id and name.
+  - Id should be non-negative and name between 3 and 15 symbols.
+- One employee can work on many projects and many employees can take part in a single project.
+
+## API
+
+- API should support CRUD operations for both employees and projects.
+- API should provide functionality for accessing all projects for an employee and all employees that work on a project (consider how to build urls that follow the REST standards).
+- API should provide functionality for (dis)connecting an employee with a project.
+- API should validate all user input and return proper messages and status codes.
+- API should provide functionality for filtering and sorting employees by first name and/or last name.
+- When deleting employee/project you need to ensure that all related data is updated.
+
+## Testing
+
+- API should be covered with unit test with code coverage at least 80%.
+
+## Additional Requirements
+
+You should use your personal repositories and upload the solutions there.
+
+Please keep in mind you have to build the solution step-by-step. You will be building up knowledge meanwhile and gain skills to finish the task.
+
+This workshop is for your preparation. You can work on it until you receive your teamwork task.
