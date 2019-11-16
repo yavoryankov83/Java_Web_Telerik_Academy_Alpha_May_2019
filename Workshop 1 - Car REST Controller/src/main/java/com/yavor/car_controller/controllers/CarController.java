@@ -56,10 +56,10 @@ public class CarController {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format(CAR_NOT_EXIST_EXCEPTION, carId));
     }
     Car carToChange = getCarById(carId);
-    if (car.getModel() != null){
+    if (car.getModel() != null) {
       carToChange.setModel(car.getModel());
     }
-    if (car.getType() != null){
+    if (car.getType() != null) {
       carToChange.setType(car.getType());
     }
   }
@@ -118,7 +118,7 @@ public class CarController {
             .collect(Collectors.toList());
   }
 
-  private boolean isCarExists(int carId){
+  private boolean isCarExists(int carId) {
     return getAllCars()
             .stream()
             .anyMatch(car -> car.getId() == carId);
